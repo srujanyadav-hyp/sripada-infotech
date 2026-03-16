@@ -8,7 +8,10 @@ const Footer = () => {
       <div className="container-narrow section-padding pb-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
-            <h3 className="font-display text-2xl font-bold mb-4">Sripada Infotech</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <img src={logoImg} alt="Sripada Infotech" className="h-12 w-auto" />
+              <h3 className="font-display text-2xl font-bold">Sripada Infotech</h3>
+            </div>
             <p className="text-primary-foreground/70 max-w-md mb-6">
               Building innovative software solutions for modern businesses. We transform ideas into powerful digital products.
             </p>
