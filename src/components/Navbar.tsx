@@ -47,8 +47,8 @@ const Navbar = () => {
               key={link.to}
               to={link.to}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? (scrolled ? "text-blue-600 bg-blue-50" : "text-blue-400 bg-blue-400/10")
+                : (scrolled ? "text-gray-600 hover:text-blue-600 hover:bg-blue-50" : "text-white/80 hover:text-blue-400 hover:bg-white/10")
                 }`}
             >
               {link.label}
@@ -59,7 +59,7 @@ const Navbar = () => {
         {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-foreground"
+          className={`md:hidden p-2 transition-colors ${scrolled ? "text-gray-600" : "text-white"}`}
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -81,8 +81,8 @@ const Navbar = () => {
                   key={link.to}
                   to={link.to}
                   className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
                     }`}
                 >
                   {link.label}

@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useInView, animate } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Globe, Smartphone, TestTube, Palette, Megaphone, Code2,
@@ -42,11 +43,33 @@ const industries = [
 ];
 
 const stats = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "30+", label: "Happy Clients" },
-  { value: "5+", label: "Years Experience" },
-  { value: "99%", label: "Client Satisfaction" },
+  { value: 50, suffix: "+", label: "Projects Delivered" },
+  { value: 30, suffix: "+", label: "Happy Clients" },
+  { value: 5, suffix: "+", label: "Years Experience" },
+  { value: 99, suffix: "%", label: "Client Satisfaction" },
 ];
+
+const AnimatedCounter = ({ from, to, suffix }: { from: number, to: number, suffix: string }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (isInView && ref.current) {
+      const controls = animate(from, to, {
+        duration: 2.5,
+        ease: "easeOut",
+        onUpdate(value) {
+          if (ref.current) {
+            ref.current.textContent = Math.round(value).toString() + suffix;
+          }
+        }
+      });
+      return () => controls.stop();
+    }
+  }, [isInView, from, to, suffix]);
+
+  return <span ref={ref}>{from}{suffix}</span>;
+};
 
 const HomePage = () => {
   return (
@@ -64,15 +87,15 @@ const HomePage = () => {
             animate="visible"
             variants={{
               hidden: { opacity: 0 },
-              visible: { 
-                opacity: 1, 
-                transition: { 
+              visible: {
+                opacity: 1,
+                transition: {
                   staggerChildren: 0.15,
                   delayChildren: 0.2
-                } 
+                }
               }
             }}
-            className="max-w-3xl"
+            className="max-w-4xl mx-auto flex flex-col items-center text-center"
           >
             <motion.div
               variants={{
@@ -84,8 +107,8 @@ const HomePage = () => {
                 IT Services & Software Development
               </span>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: "hsl(0 0% 100%)" }}
               variants={{
                 hidden: { opacity: 1 },
@@ -100,86 +123,93 @@ const HomePage = () => {
               initial="hidden"
               animate="visible"
             >
-              <div className="flex flex-wrap gap-x-[1px] gap-y-2 lg:gap-y-3 lg:gap-x-[2px] justify-start">
+              <div className="flex flex-col justify-center items-center gap-y-1">
                 {(() => {
-                  const line1 = "Building Innovative Software Solutions for ".split("");
-                  const line2 = "Modern Businesses".split("");
-                  const totalChars = line1.length + line2.length;
-                  
+                  let globalCharIndex = 0;
+
+                  const renderStaggeredText = (text: string) => {
+                    const words = text.split(" ");
+
+                    return words.map((word, wordIndex) => (
+                      <span key={`word-${wordIndex}`} className="inline-flex whitespace-nowrap overflow-visible">
+                        {word.split("").map((char) => {
+                          const currentIndex = globalCharIndex++;
+                          return (
+                            <motion.span
+                              key={`char-${currentIndex}`}
+                              initial={{ opacity: 0, x: 50 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{
+                                delay: currentIndex * 0.02,
+                                duration: 1,
+                                ease: "backOut"
+                              }}
+                              className="inline-block"
+                            >
+                              {char}
+                            </motion.span>
+                          );
+                        })}
+                      </span>
+                    ));
+                  };
+
                   return (
                     <>
-                      {line1.map((char, index) => (
-                        <motion.span
-                          key={`l1-${char}-${index}`}
-                          initial={{ opacity: 0, x: 20, filter: "blur(8px)" }}
-                          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                          transition={{ 
-                            delay: 0.2 + (index * 0.03), 
-                            type: "spring", 
-                            damping: 15, 
-                            stiffness: 100 
-                          }}
-                          className="inline-block"
-                          style={{ whiteSpace: char === " " ? "pre" : "normal" }}
-                        >
-                          {char}
-                        </motion.span>
-                      ))}
+                      {/* Subheading style */}
+                      <div className="flex flex-wrap justify-center gap-x-[0.35em] gap-y-2 text-white/85 font-medium text-2xl md:text-3xl lg:text-4xl pt-2 pb-1">
+                        {renderStaggeredText("Building Innovative")}
+                      </div>
                       
-                      <span className="text-gradient relative inline-flex">
-                        {line2.map((char, index) => (
+                      {/* Main heading style */}
+                      <div className="flex flex-wrap justify-center gap-x-[0.35em] gap-y-2 font-extrabold text-5xl md:text-6xl lg:text-[5.5rem] leading-[1.05] tracking-tight text-white drop-shadow-sm">
+                        {renderStaggeredText("Software Solutions")}
+                      </div>
+                      
+                      {/* Third line playful style */}
+                      <div className="flex flex-wrap justify-center gap-x-[0.35em] gap-y-3 items-center font-bold text-4xl md:text-5xl lg:text-[4rem] mt-2 md:mt-3">
+                        <div className="flex items-center gap-x-[0.2em] text-white/80 text-xl md:text-2xl lg:text-3xl px-6 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md shadow-[0_4px_20px_rgba(255,255,255,0.05)] mr-1 md:mr-2">
+                          {renderStaggeredText("for")}
+                        </div>
+                        <span className="text-gradient relative inline-flex pb-2">
+                          {renderStaggeredText("Modern Businesses")}
                           <motion.span
-                            key={`l2-${char}-${index}`}
-                            initial={{ opacity: 0, x: 20, filter: "blur(8px)" }}
-                            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                            transition={{ 
-                              delay: 0.2 + (index * 0.03), // Make both lines start at the exact same time
-                              type: "spring", 
-                              damping: 15, 
-                              stiffness: 100 
-                            }}
-                            className="inline-block"
-                            style={{ whiteSpace: char === " " ? "pre" : "normal" }}
-                          >
-                            {char}
-                          </motion.span>
-                        ))}
-                        <motion.span 
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ delay: 0.2 + (Math.max(line1.length, line2.length) * 0.03) + 0.3, duration: 1, ease: "circOut" }}
-                          className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent rounded-full origin-left"
-                        />
-                      </span>
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ delay: globalCharIndex * 0.02 + 0.4, duration: 1.2, ease: "circOut" }}
+                            className="absolute bottom-0 left-0 w-full h-[6px] md:h-[8px] bg-gradient-to-r from-primary to-accent rounded-full origin-left opacity-90 shadow-[0_0_15px_rgba(var(--primary),0.3)]"
+                          />
+                        </span>
+                      </div>
                     </>
                   );
                 })()}
               </div>
             </motion.div>
-            
-            <motion.p 
+
+            <motion.p
               variants={{
                 hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
                 visible: { opacity: 1, filter: "blur(0px)", y: 0, transition: { duration: 0.6 } }
               }}
-              className="text-lg md:text-xl mb-8 max-w-2xl" style={{ color: "hsl(0 0% 100% / 0.7)" }}>
+              className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-center" style={{ color: "hsl(0 0% 100% / 0.7)" }}>
               Sripada Infotech transforms your ideas into powerful digital products with cutting-edge technology and expert craftsmanship.
             </motion.p>
-            
-            <motion.div 
+
+            <motion.div
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 12 } }
               }}
-              className="flex flex-wrap gap-4">
+              className="flex flex-wrap gap-4 justify-center">
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button asChild size="lg" className="gradient-primary shadow-[0_0_20px_rgba(var(--primary),0.3)] text-base px-8 relative overflow-hidden group">
                   <Link to="/contact">
                     <span className="relative z-10 flex items-center">
-                      Get Started 
-                      <motion.div 
-                        initial={{ x: 0 }} 
-                        whileHover={{ x: 4 }} 
+                      Get Started
+                      <motion.div
+                        initial={{ x: 0 }}
+                        whileHover={{ x: 4 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         <ArrowRight size={18} className="ml-2" />
@@ -189,7 +219,7 @@ const HomePage = () => {
                   </Link>
                 </Button>
               </motion.div>
-              
+
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Button asChild variant="outline" size="lg" className="border-primary-foreground/20 text-base px-8 group relative overflow-hidden" style={{ color: "hsl(0 0% 100%)", borderColor: "hsl(0 0% 100% / 0.2)", backgroundColor: "hsl(0 0% 100% / 0.1)" }}>
                   <Link to="/services">
@@ -217,7 +247,9 @@ const HomePage = () => {
                 variants={fadeUp}
                 className="bg-card rounded-xl p-6 text-center shadow-card"
               >
-                <div className="font-display text-3xl md:text-4xl font-bold text-gradient mb-1">{stat.value}</div>
+                <div className="font-display text-3xl md:text-4xl font-bold text-gradient mb-1">
+                  <AnimatedCounter from={0} to={stat.value} suffix={stat.suffix} />
+                </div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
               </motion.div>
             ))}
@@ -240,15 +272,46 @@ const HomePage = () => {
                 custom={i}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="group bg-card rounded-xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 border border-border hover:border-primary/20"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={{
+                  hidden: { opacity: 0, y: 50 },
+                  visible: (idx) => ({
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      delay: idx * 0.1, 
+                      type: "spring", 
+                      stiffness: 100, 
+                      damping: 12 
+                    }
+                  })
+                }}
+                whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
+                className="group relative bg-card/80 backdrop-blur-sm rounded-2xl p-8 shadow-card hover:shadow-[0_20px_40px_-5px_rgba(var(--primary),0.15)] transition-all duration-500 border border-border/50 hover:border-primary/50 overflow-hidden cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center mb-4 text-primary-foreground group-hover:scale-110 transition-transform">
-                  <s.icon size={24} />
+                {/* Background Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
+                
+                {/* Top right floating orb on hover */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 group-hover:-translate-x-2 group-hover:translate-y-2 pointer-events-none" />
+
+                <div className="relative z-10 w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary transition-colors duration-500">
+                  <s.icon size={28} className="text-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-500" />
                 </div>
-                <h3 className="font-display text-lg font-semibold mb-2 text-foreground">{s.title}</h3>
-                <p className="text-muted-foreground text-sm">{s.desc}</p>
+                
+                <h3 className="relative z-10 font-display text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors duration-300">
+                  {s.title}
+                </h3>
+                
+                <p className="relative z-10 text-muted-foreground text-sm leading-relaxed mb-6">
+                  {s.desc}
+                </p>
+
+                {/* Learn More link animation */}
+                <div className="relative z-10 flex items-center text-sm font-semibold text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                  <span className="mr-2">Explore Solution</span>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
               </motion.div>
             ))}
           </div>
