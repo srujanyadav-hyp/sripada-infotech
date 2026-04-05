@@ -60,29 +60,145 @@ const HomePage = () => {
 
         <div className="container-narrow relative z-10 pt-20">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { 
+                opacity: 1, 
+                transition: { 
+                  staggerChildren: 0.15,
+                  delayChildren: 0.2
+                } 
+              }
+            }}
             className="max-w-3xl"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/20 text-accent mb-6">
-              IT Services & Software Development
-            </span>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: "hsl(0 0% 100%)" }}>
-              Building Innovative Software Solutions for{" "}
-              <span className="text-gradient">Modern Businesses</span>
-            </h1>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl" style={{ color: "hsl(0 0% 100% / 0.7)" }}>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scale: 0.8, x: -30 },
+                visible: { opacity: 1, scale: 1, x: 0, transition: { type: "spring", stiffness: 100, damping: 10 } }
+              }}
+            >
+              <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/20 text-accent mb-6 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                IT Services & Software Development
+              </span>
+            </motion.div>
+            
+            <motion.div 
+              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6" style={{ color: "hsl(0 0% 100%)" }}
+              variants={{
+                hidden: { opacity: 1 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    delayChildren: 0.1,
+                    staggerChildren: 0.04,
+                  }
+                }
+              }}
+              initial="hidden"
+              animate="visible"
+            >
+              <div className="flex flex-wrap gap-x-[1px] gap-y-2 lg:gap-y-3 lg:gap-x-[2px] justify-start">
+                {(() => {
+                  const line1 = "Building Innovative Software Solutions for ".split("");
+                  const line2 = "Modern Businesses".split("");
+                  const totalChars = line1.length + line2.length;
+                  
+                  return (
+                    <>
+                      {line1.map((char, index) => (
+                        <motion.span
+                          key={`l1-${char}-${index}`}
+                          initial={{ opacity: 0, x: 20, filter: "blur(8px)" }}
+                          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                          transition={{ 
+                            delay: 0.2 + (index * 0.03), 
+                            type: "spring", 
+                            damping: 15, 
+                            stiffness: 100 
+                          }}
+                          className="inline-block"
+                          style={{ whiteSpace: char === " " ? "pre" : "normal" }}
+                        >
+                          {char}
+                        </motion.span>
+                      ))}
+                      
+                      <span className="text-gradient relative inline-flex">
+                        {line2.map((char, index) => (
+                          <motion.span
+                            key={`l2-${char}-${index}`}
+                            initial={{ opacity: 0, x: 20, filter: "blur(8px)" }}
+                            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                            transition={{ 
+                              delay: 0.2 + (index * 0.03), // Make both lines start at the exact same time
+                              type: "spring", 
+                              damping: 15, 
+                              stiffness: 100 
+                            }}
+                            className="inline-block"
+                            style={{ whiteSpace: char === " " ? "pre" : "normal" }}
+                          >
+                            {char}
+                          </motion.span>
+                        ))}
+                        <motion.span 
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ delay: 0.2 + (Math.max(line1.length, line2.length) * 0.03) + 0.3, duration: 1, ease: "circOut" }}
+                          className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent rounded-full origin-left"
+                        />
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </motion.div>
+            
+            <motion.p 
+              variants={{
+                hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+                visible: { opacity: 1, filter: "blur(0px)", y: 0, transition: { duration: 0.6 } }
+              }}
+              className="text-lg md:text-xl mb-8 max-w-2xl" style={{ color: "hsl(0 0% 100% / 0.7)" }}>
               Sripada Infotech transforms your ideas into powerful digital products with cutting-edge technology and expert craftsmanship.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button asChild size="lg" className="gradient-primary shadow-button text-base px-8">
-                <Link to="/contact">Get Started <ArrowRight size={18} className="ml-2" /></Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-primary-foreground/20 text-base px-8" style={{ color: "hsl(0 0% 100%)", borderColor: "hsl(0 0% 100% / 0.2)" }}>
-                <Link to="/services">Our Services</Link>
-              </Button>
-            </div>
+            </motion.p>
+            
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 12 } }
+              }}
+              className="flex flex-wrap gap-4">
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Button asChild size="lg" className="gradient-primary shadow-[0_0_20px_rgba(var(--primary),0.3)] text-base px-8 relative overflow-hidden group">
+                  <Link to="/contact">
+                    <span className="relative z-10 flex items-center">
+                      Get Started 
+                      <motion.div 
+                        initial={{ x: 0 }} 
+                        whileHover={{ x: 4 }} 
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <ArrowRight size={18} className="ml-2" />
+                      </motion.div>
+                    </span>
+                    <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                  </Link>
+                </Button>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Button asChild variant="outline" size="lg" className="border-primary-foreground/20 text-base px-8 group relative overflow-hidden" style={{ color: "hsl(0 0% 100%)", borderColor: "hsl(0 0% 100% / 0.2)", backgroundColor: "hsl(0 0% 100% / 0.1)" }}>
+                  <Link to="/services">
+                    <span className="relative z-10 transition-colors group-hover:text-primary">Our Services</span>
+                    <span className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </div>
       </section>

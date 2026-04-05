@@ -30,15 +30,14 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-card/95 backdrop-blur-md shadow-card border-b border-border"
-          : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? "bg-card/95 backdrop-blur-md shadow-card border-b border-border"
+        : "bg-transparent"
+        }`}
     >
-      <div className="container-narrow flex items-center justify-between h-16 md:h-20">
+      <div className="container-narrow flex items-center justify-between py-2 md:py-3">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="Sripada Infotech" className="h-10 md:h-12 w-auto" />
+          <img src={logo} alt="Sripada Infotech" className="h-16 md:h-24 w-auto object-contain" />
         </Link>
 
         {/* Desktop */}
@@ -47,11 +46,10 @@ const Navbar = () => {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === link.to
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
+                ? "text-primary bg-primary/10"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
             >
               {link.label}
             </Link>
@@ -82,11 +80,10 @@ const Navbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === link.to
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.to
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
                 >
                   {link.label}
                 </Link>
