@@ -1,5 +1,5 @@
-import { motion, useInView, animate } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { motion, useInView, animate, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Globe, Smartphone, TestTube, Palette, Megaphone, Code2,
@@ -34,12 +34,54 @@ const whyUs = [
 ];
 
 const industries = [
-  { icon: Rocket, label: "Startups" },
-  { icon: GraduationCap, label: "Education" },
-  { icon: Heart, label: "Healthcare" },
-  { icon: Star, label: "Astrology" },
-  { icon: ShoppingCart, label: "Retail & eCommerce" },
-  { icon: Building2, label: "Service Businesses" },
+  { 
+    id: "startups",
+    icon: Rocket, 
+    label: "Startups & SaaS",
+    title: "Accelerating Startups from Idea to MVP",
+    desc: "We provide rapid prototyping, scalable architecture, and full-stack engineering tailored for agile startups aiming to disrupt the market.",
+    features: ["Rapid MVP Development", "Cloud-Native Architecture", "Growth-Driven UI/UX"]
+  },
+  { 
+    id: "education",
+    icon: GraduationCap, 
+    label: "EdTech",
+    title: "Digital Transformation in Education",
+    desc: "Empower educators and students with intuitive learning management systems (LMS), virtual classrooms, and interactive e-learning portals.",
+    features: ["Custom LMS Platforms", "Student Tracking Portals", "Interactive Classrooms"]
+  },
+  { 
+    id: "healthcare",
+    icon: Heart, 
+    label: "Healthcare",
+    title: "Secure & Compliant Healthcare Tech",
+    desc: "Deliver personalized care with powerful telemedicine apps, clinic management software, and HIPAA-compliant health portals.",
+    features: ["Telemedicine Apps", "Clinic Management Systems", "Patient Portals"]
+  },
+  { 
+    id: "ecommerce",
+    icon: ShoppingCart, 
+    label: "Retail & eCommerce",
+    title: "Next-Gen Retail Experiences",
+    desc: "Boost sales with high-performance eCommerce platforms, robust inventory management, and seamless global payment integrations.",
+    features: ["Custom Storefronts", "Inventory Systems", "Secure Checkout"]
+  },
+  { 
+    id: "astrology",
+    icon: Star, 
+    label: "Astrology",
+    title: "Innovative Astrology Platforms",
+    desc: "Engage users with live consultation apps, daily horoscope APIs, and secure payment-integrated platforms for astrologers.",
+    features: ["Live Chat & Video", "Daily Horoscope Gen", "Consultation Portals"]
+  },
+  { 
+    id: "services",
+    icon: Building2, 
+    label: "Logistics & Services",
+    title: "Streamlined Service Operations",
+    desc: "Optimize routing, manage large mobile workforces, and track real-time dispatching with custom-built enterprise software.",
+    features: ["Field Force Tracking", "Dynamic Routing", "Dispatch Dashboards"]
+  },
 ];
 
 const stats = [
@@ -72,6 +114,8 @@ const AnimatedCounter = ({ from, to, suffix }: { from: number, to: number, suffi
 };
 
 const HomePage = () => {
+  const [activeIndustry, setActiveIndustry] = useState(0);
+
   return (
     <>
       {/* Hero */}
@@ -353,29 +397,117 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Industries */}
-      <section className="section-padding">
-        <div className="container-narrow">
-          <SectionHeading
-            badge="Industries"
-            title="Industries We Serve"
-            description="Delivering tailored solutions across diverse sectors"
-          />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {industries.map((ind, i) => (
+      {/* Industries - NuVizz Inspired */}
+      <section className="py-24 relative overflow-hidden bg-[#070b14]">
+        {/* Background dark gradients */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px]" />
+        </div>
+
+        <div className="container-narrow relative z-10">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4 border border-primary/20">
+              Industries We Serve
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-white mb-6">
+              Empowering Sectors Through Innovation
+            </h2>
+            <p className="text-lg text-white/60 max-w-2xl mx-auto">
+              We leverage deep domain expertise to build software that drives real impact in your specific industry.
+            </p>
+          </div>
+
+          {/* Pill Navigation */}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-12">
+            {industries.map((ind, i) => {
+              const isActive = activeIndustry === i;
+              return (
+                <button
+                  key={ind.id}
+                  onClick={() => setActiveIndustry(i)}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                    isActive 
+                      ? "bg-primary text-white shadow-[0_0_20px_rgba(var(--primary),0.4)]" 
+                      : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white border border-white/5"
+                  }`}
+                >
+                  <ind.icon size={18} className={isActive ? "text-white" : "text-primary"} />
+                  {ind.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Industry Split Showcase */}
+          <div className="relative bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl overflow-hidden min-h-[400px] shadow-2xl">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={ind.label}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
-                className="bg-card rounded-xl p-6 text-center shadow-card hover:shadow-card-hover transition-all duration-300 border border-border hover:border-primary/20"
+                key={activeIndustry}
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.98 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-0"
               >
-                <ind.icon size={32} className="mx-auto mb-3 text-primary" />
-                <span className="text-sm font-medium text-foreground">{ind.label}</span>
+                {/* Left Column: Content */}
+                <div className="p-8 md:p-12 flex flex-col justify-center">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-8 border border-primary/30">
+                    {(() => {
+                      const ActiveIcon = industries[activeIndustry].icon;
+                      return <ActiveIcon size={32} className="text-primary" />;
+                    })()}
+                  </div>
+                  
+                  <h3 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
+                    {industries[activeIndustry].title}
+                  </h3>
+                  
+                  <p className="text-white/70 text-lg leading-relaxed mb-8">
+                    {industries[activeIndustry].desc}
+                  </p>
+
+                  <ul className="space-y-4 mb-10">
+                    {industries[activeIndustry].features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center text-white/80">
+                        <CheckCircle2 size={20} className="text-primary mr-3 shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div>
+                    <Button className="gradient-primary border-0 rounded-full px-8 hover:shadow-[0_0_20px_rgba(var(--primary),0.5)] transition-shadow">
+                      Explore Solutions <ArrowRight size={16} className="ml-2" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Right Column: Visualizer */}
+                <div className="relative bg-gradient-to-br from-primary/10 to-transparent p-8 flex items-center justify-center min-h-[300px] lg:min-h-full border-l border-white/5">
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                  
+                  {/* Floating abstract tech graphic */}
+                  <motion.div 
+                    initial={{ y: 0 }}
+                    animate={{ y: [-15, 15, -15] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    className="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-full border border-primary/30 flex items-center justify-center bg-primary/5 backdrop-blur-sm shadow-[inset_0_0_50px_rgba(var(--primary),0.2)]"
+                  >
+                    <div className="w-48 h-48 md:w-60 md:h-60 rounded-full border border-accent/40 flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                      <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-tr from-primary to-accent blur-xl opacity-40 animate-pulse"></div>
+                    </div>
+                    {/* Centered large icon */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {(() => {
+                        const ActiveIcon = industries[activeIndustry].icon;
+                        return <ActiveIcon size={80} className="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />;
+                      })()}
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
-            ))}
+            </AnimatePresence>
           </div>
         </div>
       </section>
